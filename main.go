@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -19,17 +20,23 @@ func main() {
 }
 
 func consumer(ch chan Callable) {
+	var (
+		callErr error
+		res     interface{}
+	)
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Printf("error(%v) detected, restarting\n", err)
+			fmt.Printf("panic(%v) detected, restarting\n", err)
 			go consumer(ch)
 		}
 	}()
 	for {
 		time.Sleep(duration)
 		callable := <-ch
-		count, _ := callable()
-		fmt.Printf("%d\n", count)
+		if res, callErr = callable(); callErr != nil {
+			fmt.Printf("error(%v)\n", callErr)
+		}
+		fmt.Printf("res: %v\n", res)
 	}
 }
 
@@ -39,13 +46,17 @@ func producer(ch chan Callable) {
 		time.Sleep(duration)
 		count += 1
 		ch <- func() (interface{}, error) {
-			newCount, err := func() (int, error) {
-				if count%5 == 0 {
-					panic(fmt.Sprintf("count: %d, panic", count))
+			return func() (res int, err error) {
+				if count%3 == 0 {
+					panic(fmt.Sprintf("count: %d", res))
 				}
-				return count, nil
+				if count%5 == 0 {
+					err = errors.New(fmt.Sprintf("count: %d", res))
+					return
+				}
+				res = count
+				return
 			}()
-			return newCount, err
 		}
 	}
 }
