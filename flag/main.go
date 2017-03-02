@@ -7,7 +7,7 @@ import (
 
 var ip string
 
-func init()  {
+func init() {
 	flag.StringVar(&ip, "ip", "noip", "ip address")
 }
 
