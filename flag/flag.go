@@ -1,4 +1,4 @@
-package main
+package flag
 
 import (
 	"flag"
@@ -11,7 +11,7 @@ func init() {
 	flag.StringVar(&ip, "ip", "noip", "ip address")
 }
 
-func main() {
+func Start() {
 	flag.Parse()
 	fmt.Printf("ip: %s", ip)
 }

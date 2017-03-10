@@ -1,4 +1,4 @@
-package main
+package executor
 
 import (
 	"errors"
@@ -12,7 +12,7 @@ const (
 	duration time.Duration = 1 * time.Second
 )
 
-func main() {
+func Start() {
 	ch := make(chan Callable, 10240)
 	go producer(ch)
 	go consumer(ch)
