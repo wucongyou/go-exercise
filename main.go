@@ -3,5 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("In i mode, press ^x,^o to autocomplete")
+	// k, j for up, down
+	// h, l for left, right
+	fmt.Println("In i mode, press ^x, ^o for code completion")
 }
