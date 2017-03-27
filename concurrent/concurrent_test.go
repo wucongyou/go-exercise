@@ -11,3 +11,7 @@ func testChan(t *testing.T) {
 func testWaitGroup(t *testing.T) {
 	WaitGroup()
 }
+
+func testSelect(t *testing.T) {
+	Select()
+}
