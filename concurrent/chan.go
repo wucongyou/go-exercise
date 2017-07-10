@@ -13,9 +13,9 @@ func Chan() {
 		wg.Add(1)
 		go func(id int) {
 			defer wg.Done()
-			fmt.Printf("%d : ready", id)
+			fmt.Printf("%d : ready\n", id)
 			<-ready
-			fmt.Printf("%d : runnning", id)
+			fmt.Printf("%d : runnning\n", id)
 		}(i)
 	}
 	time.Sleep(time.Second)
