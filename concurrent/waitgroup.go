@@ -12,11 +12,15 @@ func WaitGroup() {
 		wg.Add(1)
 		go func(id int) {
 			defer wg.Done()
-			time.Sleep(time.Second)
-			fmt.Printf("goroutine %d done\n", id)
+			doSomething()
+			fmt.Printf("work goroutine %d done\n", id)
 		}(i)
 	}
-	fmt.Println("main waiting")
+	fmt.Println("main goroutine waiting")
 	wg.Wait()
-	fmt.Println("main done")
+	fmt.Println("main goroutine done")
+}
+
+func doSomething() {
+	time.Sleep(time.Second)
 }
