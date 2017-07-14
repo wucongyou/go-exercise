@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "mb7JV1M7OFsuHlXEPY/LdVBGKVg=",
+			"path": "github.com/garyburd/redigo/redis",
+			"revision": "9f3a0116c9f72c5a56f958206a43dc881b502c37",
+			"revisionTime": "2017-07-06T22:48:25Z"
+		}
+	],
+	"rootPath": "go-exercise"
+}
