@@ -8,18 +8,25 @@ import (
 	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 var (
-	infile string
+	infile  string
+	outfile string
 )
 
 func init() {
-	flag.StringVar(&infile, "f", "hello.md", "input markdown file")
+	flag.StringVar(&infile, "f", "hello.md", "input markdown filepath")
+	flag.StringVar(&outfile, "o", "", "out html filepath")
 }
 
 func Md() {
 	flag.Parse()
+	if outfile == "" {
+		arr := strings.Split(infile, ".md")
+		outfile = arr[0] + ".html"
+	}
 	f, err := os.Open(infile)
 	if err != nil {
 		panic(err)
@@ -33,4 +40,8 @@ func Md() {
 	unsafe := blackfriday.MarkdownCommon([]byte(input))
 	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 	fmt.Printf("html: %s", string(html))
+	err = ioutil.WriteFile(outfile, html, 0644)
+	if err != nil {
+		panic(err)
+	}
 }
