@@ -6,6 +6,8 @@ import (
 
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
+	"io/ioutil"
+	"os"
 )
 
 var (
@@ -13,12 +15,21 @@ var (
 )
 
 func init() {
-	flag.StringVar(&infile, "f", "", "input markdown file")
+	flag.StringVar(&infile, "f", "hello.md", "input markdown file")
 }
 
 func Md() {
 	flag.Parse()
-	input := "## Hello,world"
+	f, err := os.Open(infile)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	fd, err := ioutil.ReadAll(f)
+	if err != nil {
+		panic(err)
+	}
+	input := string(fd)
 	unsafe := blackfriday.MarkdownCommon([]byte(input))
 	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 	fmt.Printf("html: %s", string(html))
