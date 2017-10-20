@@ -7,9 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bradfitz/gomemcache/memcache"
 	"go-exercise/memcache/dao"
 	"go-exercise/memcache/model"
+
+	"github.com/bradfitz/gomemcache/memcache"
 )
 
 var (
