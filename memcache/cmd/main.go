@@ -14,8 +14,6 @@ var (
 	ErrSyntaxErr = errors.New("ERR syntax error")
 )
 
-// get key
-// keys *
 func main() {
 	var (
 		host string
