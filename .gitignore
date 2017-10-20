@@ -3,4 +3,5 @@
 go-exercise
 *.rdb
 *.html
-*.test
+encrypt/rsa_private_test.go
+*/cmd/cmd
