@@ -32,8 +32,8 @@ func main() {
 		Host: host,
 		Port: port,
 	})
-	if _, err := d.Get("ping"); err != nil {
-		fmt.Println(err)
+	if _, err := d.Get("ping"); err != nil && err != memcache.ErrCacheMiss {
+		fmt.Printf("fail to connect %s:%d, error(%v)", host, port, err)
 		return
 	}
 	fmt.Printf("connected to %s:%d\n", host, port)
