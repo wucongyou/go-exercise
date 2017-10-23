@@ -1,4 +1,4 @@
-memcache
+mccli
 ====
 A client for memcache.
 

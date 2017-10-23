@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"go-exercise/memcache/dao"
-	"go-exercise/memcache/model"
+	"go-exercise/mccli/dao"
+	"go-exercise/mccli/model"
 
 	"github.com/bradfitz/gomemcache/memcache"
 )
