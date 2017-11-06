@@ -18,4 +18,10 @@ func TestDao_PutUser(t *testing.T) {
 		t.Errorf("dao.PutUser(%+v) error(%v)", u, err)
 		t.FailNow()
 	}
+	if res, err := d.User(context.TODO(), u.ID); err != nil {
+		t.Errorf("dao.User(%d) error(%v)", u.ID, err)
+		t.FailNow()
+	} else {
+		t.Logf("res: %v", res)
+	}
 }

@@ -68,6 +68,11 @@ func (d *Dao) User(c context.Context, id int64) (res *model.User, err error) {
 	u := new(model.User)
 	for _, cell := range r.Cells {
 		if bytes.Equal(cell.Family, _fB) {
+			if u.ID == 0 {
+				if u.ID, err = strconv.ParseInt(string(cell.Row), 10, 64); err != nil {
+					return
+				}
+			}
 			switch {
 			case bytes.Equal(cell.Qualifier, _cUsernameB):
 				u.Username = string(cell.Value)
@@ -77,5 +82,6 @@ func (d *Dao) User(c context.Context, id int64) (res *model.User, err error) {
 
 		}
 	}
+	res = u
 	return
 }
