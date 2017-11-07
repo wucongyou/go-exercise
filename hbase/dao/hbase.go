@@ -1,15 +1,16 @@
 package dao
 
 import (
+	"bytes"
 	"context"
+	"encoding/binary"
+	"fmt"
+	"strconv"
+	"time"
 
 	"go-exercise/hbase/model"
 
-	"bytes"
-	"fmt"
 	"github.com/tsuna/gohbase/hrpc"
-	"strconv"
-	"time"
 )
 
 const (
@@ -30,16 +31,42 @@ func rowKey(id int64) string {
 	return strconv.FormatInt(id, 10)
 }
 
+const (
+	_inputFormat  = "2006-01-02 15:04:05"
+	_outPutFormat = "2006010215"
+)
+
+func rk(tStr, uidStr, idStr string) []byte {
+	ti, _ := time.Parse(_inputFormat, tStr)
+	afStr := ti.Format(_outPutFormat)
+	b := make([]byte, 4)
+	t, _ := strconv.ParseInt(afStr, 10, 64)
+	binary.BigEndian.PutUint32(b, uint32(t))
+	buf := bytes.NewBuffer([]byte{})
+	buf.Write(b)
+	uid, _ := strconv.ParseInt(uidStr, 10, 64)
+	binary.BigEndian.PutUint32(b, uint32(uid))
+	buf.Write(b)
+	id, _ := strconv.ParseInt(idStr, 10, 64)
+	binary.BigEndian.PutUint32(b, uint32(id))
+	buf.Write(b)
+	return buf.Bytes()
+}
+
 func (d *Dao) PutUser(c context.Context, u *model.User) (err error) {
 	values := map[string]map[string][]byte{
-		_f: {_cUsername: []byte(u.Username),
-			_cEmail: []byte(u.Email),
+		_f: {
+			_cUsername: []byte(u.Username),
+			_cEmail:    []byte(u.Email),
 		}}
-	key := rowKey(u.ID)
+	tStr := u.Mtime
+	uidStr := strconv.FormatInt(u.Uid, 10)
+	idStr := strconv.FormatInt(u.ID, 10)
+	key := rk(tStr, uidStr, idStr)
 	ctx, cancel := context.WithTimeout(c, _timeout)
 	defer cancel()
 	var req *hrpc.Mutate
-	if req, err = hrpc.NewPutStr(ctx, _t, key, values); err != nil {
+	if req, err = hrpc.NewPutStr(ctx, _t, string(key), values); err != nil {
 		fmt.Errorf("hrpc.NewPutStr(%s, %s) error(%v)", _t, key, err)
 		return
 	}

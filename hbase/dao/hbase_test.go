@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"encoding/hex"
 	"testing"
 
 	"go-exercise/hbase/model"
@@ -10,7 +11,9 @@ import (
 func TestDao_PutUser(t *testing.T) {
 	once.Do(startDao)
 	u := &model.User{
-		ID:       1,
+		Mtime:    "2016-09-06 00:10:12",
+		Uid:      75174,
+		ID:       0x00111863,
 		Username: "wcy",
 		Email:    "foo@bar.com",
 	}
@@ -24,4 +27,12 @@ func TestDao_PutUser(t *testing.T) {
 	} else {
 		t.Logf("res: %v", res)
 	}
+}
+
+func TestDao_RowKey(t *testing.T) {
+	tStr := "2016-09-06 00:10:12"
+	uidStr := "75174"
+	idStr := "1"
+	k := rk(tStr, uidStr, idStr)
+	t.Logf("res: %s", hex.EncodeToString(k))
 }
