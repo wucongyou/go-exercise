@@ -39,6 +39,12 @@
 			"revisionTime": "2017-07-28T17:53:26Z"
 		},
 		{
+			"checksumSHA1": "yFShrHoBr7oUwprpECBGTLZC+VQ=",
+			"path": "github.com/tsuna/gohbase",
+			"revision": "7d1880144f7d59ac25cb81b5251e8024dc6316be",
+			"revisionTime": "2017-11-07T21:07:02Z"
+		},
+		{
 			"checksumSHA1": "dr5+PfIRzXeN+l1VG+s0lea9qz8=",
 			"path": "golang.org/x/net/context",
 			"revision": "57efc9c3d9f91fb3277f8da1cff370539c4d3dc5",

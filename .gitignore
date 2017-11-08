@@ -5,3 +5,4 @@ go-exercise
 *.html
 encrypt/rsa_private_test.go
 */cmd/cmd
+.vscode
