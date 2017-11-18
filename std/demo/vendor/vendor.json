@@ -1,0 +1,17 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"path": "github.com/yeeuu/echoic",
+			"revision": "a7d6994f92e2dc60cff071ae38b204fbd4bd2a3f",
+			"revisionTime": "2015-12-18T11:14:29+08:00"
+		},
+		{
+			"path": "golang.org/x/net/context",
+			"revision": "1d9fd3b8333e891c0e7353e1adcfe8a612573033",
+			"revisionTime": "2015-11-13T15:40:13-08:00"
+		}
+	],
+	"rootPath": "echo.com/go/demo"
+}
