@@ -1,7 +1,6 @@
 package jvm
 
 import (
-	"encoding/json"
 	"testing"
 )
 
@@ -11,6 +10,9 @@ func TestParseFile(t *testing.T) {
 		t.Errorf("failed to parse file, error(%v)", err)
 		t.FailNow()
 	}
-	str, _ := json.Marshal(res)
-	t.Logf("res: %s", str)
+	str, err := res.Format()
+	if err != nil {
+		t.FailNow()
+	}
+	t.Logf("format: \n%s", str)
 }

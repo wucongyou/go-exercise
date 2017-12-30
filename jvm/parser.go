@@ -84,7 +84,7 @@ func u32(b []byte, s int) (res uint32, next int) {
 	return
 }
 
-func bytes(b []byte, s int, len int) (res []byte, next int) {
+func bs(b []byte, s int, len int) (res []byte, next int) {
 	next = s + len
 	res = b[s:next]
 	return

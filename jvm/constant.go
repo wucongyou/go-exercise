@@ -179,7 +179,7 @@ type Utf8Info struct {
 
 func (m *Utf8Info) Read(b []byte, s int) (next int) {
 	m.Length, next = u16(b, s)
-	m.Bytes, next = bytes(b, next, int(m.Length))
+	m.Bytes, next = bs(b, next, int(m.Length))
 	return
 }
 
