@@ -1,8 +1,8 @@
-package constant
+package jvm
 
 const (
 	_class              = 7
-	_fiedlRef           = 9
+	_fieldRef           = 9
 	_methodRef          = 10
 	_interfaceMethodRef = 11
 	_string             = 8
@@ -17,15 +17,20 @@ const (
 	_invokeDynamic      = 18
 )
 
+// ConstantInfo constant info, each constant info holds tag.
+type ConstantInfo struct {
+	Tag uint8
+}
+
 // ClassInfo CONSTANT_Class_info.
 type ClassInfo struct {
-	Tag       uint8
+	ConstantInfo
 	NameIndex uint16
 }
 
 // FiledRefInfo CONSTANT_Fieldref_info.
 type FieldRefInfo struct {
-	Tag              uint8
+	ConstantInfo
 	ClassIndex       uint16
 	NameAndTypeIndex uint16
 }
@@ -42,13 +47,13 @@ type InterfaceMethodRefInfo struct {
 
 // StringInfo CONSTANT_String_info.
 type StringInfo struct {
-	Tag         uint8
+	ConstantInfo
 	StringIndex uint16
 }
 
 // IntegerInfo CONSTANT_Integer_info.
 type IntegerInfo struct {
-	Tag   uint8
+	ConstantInfo
 	Bytes uint32
 }
 
@@ -59,7 +64,7 @@ type FloatInfo struct {
 
 // LongInfo CONSTANT_Long_info.
 type LongInfo struct {
-	Tag       uint8
+	ConstantInfo
 	HighBytes uint32
 	LowBytes  uint32
 }
@@ -71,34 +76,34 @@ type DoubleInfo struct {
 
 // NameAndTypeInfo CONSTANT_NameAndType_info.
 type NameAndType struct {
-	Tag             uint8
+	ConstantInfo
 	NameIndex       uint16
 	DescriptorIndex uint16
 }
 
 // Utf8Info CONSTANT_Utf8_info.
 type Utf8Info struct {
-	Tag    uint8
+	ConstantInfo
 	Length uint16
 	Bytes  []byte
 }
 
 // MethodHandler CONSTANT_MethodHandle_info.
 type MethodHandler struct {
-	Tag            uint8
+	ConstantInfo
 	ReferenceKind  uint8
 	ReferenceIndex uint16
 }
 
 // MethodTypeInfo CONSTANT_MethodType_info.
 type MethodTypeInfo struct {
-	Tag             uint8
+	ConstantInfo
 	DescriptorIndex uint16
 }
 
 // InvokeDynamicInfo CONSTANT_InvokeDynamic_info.
 type InvokeDynamicInfo struct {
-	Tag                      uint8
+	ConstantInfo
 	BootstrapMethodAttrIndex uint16
 	NameAndTypeIndex         uint16
 }
