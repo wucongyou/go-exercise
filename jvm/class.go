@@ -6,7 +6,7 @@ type ClassFile struct {
 	MinorVersion      uint16
 	MajorVersion      uint16
 	ConstantPoolCount uint16
-	CpInfo            []*ConstantInfo
+	CpInfo            []ConstantInfo
 	AccessFlags       uint16
 	ThisClass         uint16
 	SuperClass        uint16
@@ -14,9 +14,9 @@ type ClassFile struct {
 	Interfaces        []*ClassInfo
 	FieldsCount       uint16
 	Fields            []*FieldInfo
-	MethodCount       uint16
+	MethodsCount      uint16
 	Methods           []*MethodInfo
-	AttributeCount    uint16
+	AttributesCount   uint16
 	Attributes        []*AttributeInfo
 }
 
@@ -29,13 +29,22 @@ type FieldInfo struct {
 	Attributes      []*AttributeInfo
 }
 
+func (m *FieldInfo) Read(b []byte, s int) (next int) {
+	m.AccessFlags, next = u16(b, s)
+	m.NameIndex, next = u16(b, next)
+	m.DescriptorIndex, next = u16(b, next)
+	m.AttributesCount, next = u16(b, next)
+	m.Attributes = make([]*AttributeInfo, m.AttributesCount)
+	for i := 0; i < int(m.AttributesCount); i++ {
+		m.Attributes[i] = new(AttributeInfo)
+		next = m.Attributes[i].Read(b, next)
+	}
+	return
+}
+
 // MethodInfo method info.
 type MethodInfo struct {
-	AccessFlags     uint16
-	NameIndex       uint16
-	DescriptorIndex uint16
-	AttributesCount uint16
-	Attributes      []*AttributeInfo
+	FieldInfo
 }
 
 // AttributeInfo attribute info.
@@ -43,4 +52,11 @@ type AttributeInfo struct {
 	AttributeNameIndex uint16
 	AttributeLength    uint32
 	Info               []byte
+}
+
+func (m *AttributeInfo) Read(b []byte, s int) (next int) {
+	m.AttributeNameIndex, next = u16(b, s)
+	m.AttributeLength, next = u32(b, next)
+	m.Info, next = bytes(b, next, int(m.AttributeLength))
+	return
 }
