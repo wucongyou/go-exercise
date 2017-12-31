@@ -21,6 +21,25 @@ const (
 	_invokeDynamic      = 18
 )
 
+var (
+	_tm = map[uint8]string{
+		_class:              "Class",
+		_fieldRef:           "Fieldref",
+		_methodRef:          "Methodref",
+		_interfaceMethodRef: "Methodref",
+		_string:             "String",
+		_integer:            "Integer",
+		_float:              "Float",
+		_long:               "Long",
+		_double:             "Double",
+		_nameAndType:        "NameAndType",
+		_utf8:               "utf8",
+		_methodHandle:       "MethodHandle",
+		_methodType:         "MethodType",
+		_invokeDynamic:      "InvokeDynamic",
+	}
+)
+
 func NewConstantInfo(b []byte, s int) (res ConstantInfo, next int) {
 	tag, next := u8(b, s)
 	switch tag {
@@ -62,6 +81,7 @@ func NewConstantInfo(b []byte, s int) (res ConstantInfo, next int) {
 // ConstantInfo constant info, each constant info holds tag.
 type ConstantInfo interface {
 	T() uint8
+	TN() string
 	SetT(tag uint8)
 	Read(b []byte, s int) (next int)
 }
@@ -72,6 +92,10 @@ type Tag struct {
 
 func (m *Tag) T() uint8 {
 	return m.Tag
+}
+
+func (m *Tag) TN() string {
+	return _tm[m.Tag]
 }
 
 func (m *Tag) SetT(tag uint8) {
@@ -89,6 +113,16 @@ func (m *ClassInfo) Read(b []byte, s int) (next int) {
 	return
 }
 
+func (m *ClassInfo) ParseNameFromPool(cp []ConstantInfo) (name string, err error) {
+	u2, ok := cp[m.NameIndex].(*Utf8Info)
+	if !ok {
+		err = fmt.Errorf("NameIndex of class info point to a non utf8 info")
+		return
+	}
+	name, err = u2string(u2.Bytes)
+	return
+}
+
 // FiledRefInfo CONSTANT_Fieldref_info.
 type FieldRefInfo struct {
 	Tag
@@ -99,6 +133,25 @@ type FieldRefInfo struct {
 func (m *FieldRefInfo) Read(b []byte, s int) (next int) {
 	m.ClassIndex, next = u16(b, s)
 	m.NameAndTypeIndex, next = u16(b, next)
+	return
+}
+
+func (m *FieldRefInfo) ParseClassFromPool(cp []ConstantInfo) (class string, err error) {
+	n, ok := cp[m.ClassIndex].(*ClassInfo)
+	if !ok {
+		err = fmt.Errorf("class index must pointer to a ClassInfo")
+		return
+	}
+	return n.ParseNameFromPool(cp)
+}
+
+func (m *FieldRefInfo) ParseNameAndTypeFromPool(cp []ConstantInfo) (name, desc string, err error) {
+	n, ok := cp[m.NameAndTypeIndex].(*NameAndType)
+	if !ok {
+		err = fmt.Errorf("name and type index must pointer to a NameAndType")
+		return
+	}
+	name, desc, err = n.ParseFromPool(cp)
 	return
 }
 
@@ -116,6 +169,10 @@ type InterfaceMethodRefInfo struct {
 type StringInfo struct {
 	Tag
 	StringIndex uint16
+}
+
+func (m *StringInfo) ParseStringFromPool(cp []ConstantInfo) (s string, err error) {
+	return ui2string(cp, m.StringIndex)
 }
 
 func (m *StringInfo) Read(b []byte, s int) (next int) {
@@ -167,6 +224,32 @@ type NameAndType struct {
 func (m *NameAndType) Read(b []byte, s int) (next int) {
 	m.NameIndex, next = u16(b, s)
 	m.DescriptorIndex, next = u16(b, next)
+	return
+}
+
+func (m *NameAndType) ParseFromPool(cp []ConstantInfo) (name, desc string, err error) {
+	if name, err = m.ParseNameFromPool(cp); err != nil {
+		return
+	}
+	desc, err = m.ParseDescFromPool(cp)
+	return
+}
+
+func (m *NameAndType) ParseNameFromPool(cp []ConstantInfo) (res string, err error) {
+	return ui2string(cp, m.NameIndex)
+}
+
+func (m *NameAndType) ParseDescFromPool(cp []ConstantInfo) (res string, err error) {
+	return ui2string(cp, m.DescriptorIndex)
+}
+
+func ui2string(cp []ConstantInfo, i uint16) (res string, err error) {
+	u2, ok := cp[i].(*Utf8Info)
+	if !ok {
+		err = fmt.Errorf("index %d points to a non utf8 info", i)
+		return
+	}
+	res, err = u2string(u2.Bytes)
 	return
 }
 

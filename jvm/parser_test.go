@@ -12,6 +12,7 @@ func TestParseFile(t *testing.T) {
 	}
 	str, err := res.Format()
 	if err != nil {
+		t.Errorf("failed to format, error(%v)", err)
 		t.FailNow()
 	}
 	t.Logf("format: \n%s", str)
