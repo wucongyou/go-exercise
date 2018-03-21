@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	RespTypeOk    = "ok"
+	RespTypeOK    = "ok"
 	RespTypeError = "error"
 	VTypeString   = "string"
 	VTypeBinary   = "binary"
@@ -19,7 +19,7 @@ type Resp struct {
 }
 
 func (r *Resp) Format() string {
-	if r.Type == RespTypeOk {
+	if r.Type == RespTypeOK {
 		return fmt.Sprint(r.Content)
 	} else {
 		return fmt.Sprintf("%s, %s", r.Type, r.Content)
@@ -30,12 +30,12 @@ func FromItem(item *memcache.Item, t string) (r *Resp) {
 	switch parseVType(t) {
 	case VTypeBinary:
 		return &Resp{
-			Type:    RespTypeOk,
+			Type:    RespTypeOK,
 			Content: fmt.Sprintf("%v [flags: %d]", item.Value, item.Flags),
 		}
 	case VTypeString:
 		return &Resp{
-			Type:    RespTypeOk,
+			Type:    RespTypeOK,
 			Content: fmt.Sprintf("%s [flags: %d]", string(item.Value), item.Flags),
 		}
 	}
@@ -54,7 +54,7 @@ func parseVType(t string) string {
 func FromErr(err error) (r *Resp) {
 	if err == memcache.ErrCacheMiss {
 		return &Resp{
-			Type:    RespTypeOk,
+			Type:    RespTypeOK,
 			Content: "(nil)",
 		}
 	}

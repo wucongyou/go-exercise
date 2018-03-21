@@ -1,5 +1,7 @@
 package model
 
+import "strings"
+
 type Cmd struct {
 	Name        string
 	MinParamNum int
@@ -9,10 +11,11 @@ type Cmd struct {
 }
 
 const (
-	_cmdDel  = "del"
-	_cmdSet  = "set"
-	_cmdGet  = "get"
-	_cmdKeys = "keys"
+	_cmdDel      = "del"
+	_cmdSet      = "set"
+	_cmdGet      = "get"
+	_cmdKeys     = "keys"
+	_cmdFlushAll = "flushall"
 )
 
 var (
@@ -40,10 +43,17 @@ var (
 		MaxParamNum: 1,
 		Usage:       "keys pattern",
 	}
+	CmdFlushAll = &Cmd{
+		Name:        _cmdFlushAll,
+		MinParamNum: 1,
+		MaxParamNum: 1,
+		Usage:       "flushall",
+	}
 )
 
+// ParseCMD parse cmd string to cmd.
 func ParseCMD(key string) *Cmd {
-	switch key {
+	switch strings.ToLower(key) {
 	case _cmdDel:
 		return CmdDel
 	case _cmdSet:
@@ -52,6 +62,8 @@ func ParseCMD(key string) *Cmd {
 		return CmdGet
 	case _cmdKeys:
 		return CmdKeys
+	case _cmdFlushAll:
+		return CmdFlushAll
 	default:
 		return nil
 	}

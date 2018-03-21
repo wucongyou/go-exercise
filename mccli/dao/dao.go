@@ -32,3 +32,7 @@ func (d *Dao) Set(item *memcache.Item) error {
 func (d *Dao) Delete(key string) error {
 	return d.mc.Delete(key)
 }
+
+func (d *Dao) FlushAll() error {
+	return d.mc.FlushAll()
+}

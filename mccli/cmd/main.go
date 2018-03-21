@@ -24,9 +24,11 @@ func main() {
 	var (
 		host string
 		port int64
+		cmd  string
 	)
 	flag.StringVar(&host, "h", "127.0.0.1", "host")
 	flag.Int64Var(&port, "p", 11211, "port")
+	flag.StringVar(&cmd, "cmd", "", "cmd")
 	flag.Parse()
 	d := dao.New(&dao.Conf{
 		Host: host,
@@ -36,6 +38,18 @@ func main() {
 		fmt.Printf("fail to connect %s:%d, error(%v)", host, port, err)
 		return
 	}
+	if cmd != "" {
+		args := strings.Split(cmd, " ")
+		if len(args) == 0 {
+			return
+		}
+		if args[0] == "exit" {
+			return
+		}
+		recv(d, args)
+		return
+	}
+
 	fmt.Printf("connected to %s:%d\n", host, port)
 	for {
 		fmt.Printf("%s:%d> ", host, port)
@@ -82,14 +96,13 @@ func recv(d *dao.Dao, args []string) {
 		fmt.Printf("%v for '%s' command\nUsage: %s\n", ErrWrongArgumentsNum, cmd.Name, cmd.Usage)
 		return
 	}
-	var err error
 	switch cmd {
-	// set key value [expiration] [flags]
-	case model.CmdSet:
+	case model.CmdSet: // set key value [expiration] [flags]
 		key := args[1]
 		value := args[2]
 		exp := int64(0)
 		flags := uint64(0)
+		var err error
 		if paramNum >= 3 {
 			exp, err = strconv.ParseInt(args[3], 10, 32)
 			if err != nil {
@@ -116,33 +129,33 @@ func recv(d *dao.Dao, args []string) {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println("OK")
-		return
-		// del key
-	case model.CmdDel:
+	case model.CmdDel: // del key
 		key := args[1]
-		if err = d.Delete(key); err != nil {
+		if err := d.Delete(key); err != nil {
 			fmt.Println(model.FromErr(err).Format())
 			return
 		}
-		fmt.Println("OK")
-		return
-		// get key [binary|string]
-	case model.CmdGet:
+	case model.CmdGet: // get key [binary|string]
 		key := args[1]
 		item, err := d.Get(key)
 		if err != nil {
 			fmt.Println(model.FromErr(err).Format())
-		} else {
-			vtp := ""
-			if paramNum >= 2 {
-				vtp = args[2]
-			}
-			fmt.Println(model.FromItem(item, vtp).Format())
+			return
 		}
+		vtp := ""
+		if paramNum >= 2 {
+			vtp = args[2]
+		}
+		fmt.Println(model.FromItem(item, vtp).Format())
 		return
 	case model.CmdKeys:
 		fmt.Println("keys command not impled yet")
-		return
+	case model.CmdFlushAll:
+		err := d.FlushAll()
+		if err != nil {
+			fmt.Println(model.FromErr(err).Format())
+			return
+		}
 	}
+	fmt.Println("OK")
 }
