@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -40,7 +41,8 @@ func main() {
 
 	u, err := d.UserByID(context.TODO(), 1)
 	if err != nil {
-		panic(err)
+		log.Print(err)
+		return
 	}
 
 	str, _ := json.Marshal(u)
